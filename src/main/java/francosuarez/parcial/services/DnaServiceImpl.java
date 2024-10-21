@@ -28,32 +28,17 @@ public class DnaServiceImpl implements DnaService {
 
         // Validamos las Filas, columnas y diagonales
         sequencesFound += checkRows(dnaSec);
-        if (sequencesFound > 1) {
-            saveDna(dnaSec, true);
-            return true;
-        }
-
         sequencesFound += checkColumns(dnaSec);
-        if (sequencesFound > 1) {
-            saveDna(dnaSec, true);
-            return true;
-        }
-
         sequencesFound += checkDiagonals(dnaSec);
-        if (sequencesFound > 1) {
-            saveDna(dnaSec, true);
-            return true;
-        }
-
         sequencesFound += checkAntiDiagonals(dnaSec);
 
-        //Guardamos en la base de datos el resultado
-        saveDna(dnaSec, sequencesFound > 1);
+        boolean isMutant = sequencesFound > 1;
+        saveDna(dnaSec, isMutant);
 
-        return sequencesFound > 1;
+        return isMutant;
     }
 
-    private void saveDna(String[] dnaSec, boolean isMutant){
+    public void saveDna(String[] dnaSec, boolean isMutant){
         DNA dna = new DNA();
         dna.setDna(dnaSec);
         dna.setMutant(isMutant);
@@ -82,14 +67,14 @@ public class DnaServiceImpl implements DnaService {
 
     private int checkDiagonals(String[] dna) {
         int sequences = 0;
-        for (int i = 0; i < dna.length - 3; i++) {
+        for (int i = 0; i <= dna.length - 4; i++) {
             StringBuilder diagonal = new StringBuilder();
             for (int row = i, col = 0; row < dna.length && col < dna.length; row++, col++) {
                 diagonal.append(dna[row].charAt(col));
             }
             sequences += checkSequence(diagonal.toString());
         }
-        for (int i = 1; i < dna.length - 3; i++) {
+        for (int i = 1; i <= dna.length - 4; i++) {
             StringBuilder diagonal = new StringBuilder();
             for (int row = 0, col = i; row < dna.length && col < dna.length; row++, col++) {
                 diagonal.append(dna[row].charAt(col));
@@ -108,7 +93,7 @@ public class DnaServiceImpl implements DnaService {
             }
             sequences += checkSequence(diagonal.toString());
         }
-        for (int i = 1; i < dna.length - 3; i++) {
+        for (int i = 1; i <= dna.length - 4; i++) {
             StringBuilder diagonal = new StringBuilder();
             for (int row = dna.length - 1, col = i; row >= 0 && col < dna.length; row--, col++) {
                 diagonal.append(dna[row].charAt(col));
